@@ -1,44 +1,37 @@
-#
-# Please submit bugfixes or comments via http://www.trinitydesktop.org/
-#
+%bcond clang 1
+%bcond glibmainloop 1
+%bcond nas 1
+%bcond ibase 1
+%bcond nis 1
 
 # TDE variables
 %if "%{?tde_version}" == ""
 %define tde_version 14.1.5
 %endif
 
-%if 0%{?mdkversion} || 0%{?mgaversion} || 0%{?pclinuxos}
+%define pkg_rel 2
+
 %define libtqt3 %{_lib}tqt3
-%else
-%define libtqt3 libtqt3
-%endif
 
 %define tde_pkg tqt
 
-%if 0%{?mdkversion}
 %undefine __brp_remove_la_files
 %define dont_remove_libtool_files 1
 %define _disable_rebuild_configure 1
-%endif
 
 # fixes error: Empty %files file …/debugsourcefiles.list
 %define _debugsource_template %{nil}
 
 %define tarball_name %{tde_pkg}-trinity
-%global toolchain %(readlink /usr/bin/cc)
 
 Name:		trinity-tqt3
 Version:	3.5.0
-Release:	%{?tde_version}_%{?!preversion:1}%{?preversion:0_%{preversion}}%{?dist}
+Release:	%{?tde_version}_%{?!preversion:%{pkg_rel}}%{?preversion:0_%{preversion}}%{?dist}
 Summary:	TQt GUI Library, Version 3
 Group:		System/GUI/Other
 URL:		http://www.trinitydesktop.org/
 
-%if 0%{?suse_version}
-License:	GPL-2.0+
-%else
 License:	GPLv2+
-%endif
 
 #Vendor:		Trinity Project
 #Packager:	Francois Andriot <francois.andriot@free.fr>
@@ -48,9 +41,9 @@ Source1:	build-examples.sh
 Source2:	trinity-tqt-rpmlintrc
 
 BuildRequires: glibc-devel
-%if "%{?toolchain}" != "clang"
-BuildRequires: gcc-c++
-%endif
+
+%{!?with_clang:BuildRequires: gcc-c++}
+
 BuildRequires: make
 
 BuildRequires: desktop-file-utils
@@ -81,22 +74,17 @@ BuildRequires: pkgconfig(freetype2)
 # FONTCONFIG support
 BuildRequires: pkgconfig(fontconfig)
 
-# SUSE desktop files utility
-%if 0%{?suse_version}
-BuildRequires:	update-desktop-files
-%endif
-
 # CUPS support
 BuildRequires: pkgconfig(cups)
 
 # GLIB2 support
-BuildRequires: pkgconfig(glib-2.0)
+%{?with_glibmainloop:BuildRequires: pkgconfig(glib-2.0)}
 
 # UUID support
 BuildRequires: pkgconfig(uuid)
 
 # LIBAUDIO support
-BuildRequires: nas-devel
+%{?with_nas:BuildRequires: nas-devel}
 
 # FBCLIENT support
 BuildRequires: %{_lib}fbclient-devel
@@ -157,11 +145,7 @@ BuildRequires: pkgconfig(sqlite3)
 BuildRequires: pkgconfig(libpq)
 
 # Firebird support
-%define with_ibase 1
-BuildRequires:	firebird-devel
-
-# NIS support
-%define with_nis 1
+%{?with_ibase:BuildRequires:	firebird-devel}
 
 # RPC support
 BuildRequires:		pkgconfig(libnsl)
@@ -640,7 +624,7 @@ to access a PostgreSQL DB.
 
 ##########
 
-%if 0%{?with_ibase}
+%if %{with ibase}
 %package -n %{libtqt3}-mt-ibase
 Summary:	InterBase/FireBird database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
@@ -1116,25 +1100,8 @@ things that are possible with TQt3.
 %{_docdir}/tqt3-examples/build-examples
 %{_docdir}/tqt3-examples/tqt3-examples.tar.gz
 
-##########
-
-%if 0%{?suse_version} && 0%{?opensuse_bs} == 0
-%debug_package
-%endif
-
-##########
-
 %prep
 %autosetup -n %{tarball_name}-%{tde_version}%{?preversion:~%{preversion}}
-
-%if 0%{?suse_version}
-echo "suse_version = %{?suse_version}"
-echo "sle_version = %{?sle_version}"
-%endif
-
-%if 0%{?rhel} == 5
-%__sed -i "src/sql/drivers/mysql/qsql_mysql.cpp" -e "s|bool reconnect = 0;|my_bool reconnect = 0;|g"
-%endif
 
 # fix variables in 'qmake.conf'
 %__sed -i mkspecs/*/qmake.conf \
@@ -1210,17 +1177,11 @@ echo yes | ./configure \
 		-shared \
 		-fast \
 		-no-exceptions \
-%if "%{?toolchain}" == "clang"
-		-platform linux-clang \
-%else
-%if "%{_lib}" == "lib64"
-		-platform linux-g++-64 \
-%else
-		-platform linux-g++ \
-%endif
-%endif
+		%{?with_clang:-platform linux-clang} \
+		%{!?with_clang:-platform linux-g++-64} \
 		\
-		%{?with_nis:-nis} %{?!with_nis:-no-nis}		\
+    %{?with_nis:-nis} \
+    %{!?with_nis:-no-nis} \
 		-no-pch				\
 		-cups				\
 		-stl				\
@@ -1240,7 +1201,8 @@ echo yes | ./configure \
 		-system-libpng			\
 		-system-libmng			\
 		-system-libjpeg			\
-		%{?with_nas:-system-nas-sound} %{?!with_nas:-no-nas-sound}		\
+    %{?with_nas:-system-nas-sound}   \
+    %{!?with_nas:-no-nas-sound}      \
 		\
 		-enable-opengl			\
 		-dlopen-opengl			\
@@ -1260,7 +1222,7 @@ echo yes | ./configure \
 		\
 		-lfontconfig			\
 		-inputmethod			\
-		%{?with_glibmainloop:-glibmainloop} \
+    %{?with_glibmainloop:-glibmainloop}    \
 		-debug \
 		-v
 
@@ -1322,13 +1284,6 @@ for i in designer/designer assistant linguist/linguist; do
   done
   popd
 done
-
-%if 0%{?suse_version}
-%suse_update_desktop_file tqassistant Documentation
-%suse_update_desktop_file tqdesigner GUIDesigner
-%suse_update_desktop_file tqlinguist Translation
-%suse_update_desktop_file tqtconfig Utility
-%endif
 
 # Install applications icons
 #__install -m644 -D "tools/assistant/images/appicon.png" "%{?buildroot}%{_datadir}/icons/hicolor/32x32/apps/tqassistant.png"
