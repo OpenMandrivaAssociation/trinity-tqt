@@ -9,9 +9,8 @@
 %define tde_version 14.1.5
 %endif
 
-%define pkg_rel 2
-
-%define libtqt3 %{_lib}tqt3
+%define libname %mklibname tqt3-mt
+%define devname %mklibname tqt3-mt -d
 
 %define tde_pkg tqt
 
@@ -20,23 +19,21 @@
 %define _disable_rebuild_configure 1
 
 # fixes error: Empty %files file …/debugsourcefiles.list
-%define _debugsource_template %{nil}
+%undefine _debugsource_template 
 
 %define tarball_name %{tde_pkg}-trinity
 
 Name:		trinity-tqt3
 Version:	3.5.0
-Release:	%{?tde_version}_%{?!preversion:%{pkg_rel}}%{?preversion:0_%{preversion}}%{?dist}
+Release:	%{?tde_version:%{tde_version}_}4
 Summary:	TQt GUI Library, Version 3
 Group:		System/GUI/Other
 URL:		http://www.trinitydesktop.org/
 
 License:	GPLv2+
 
-#Vendor:		Trinity Project
-#Packager:	Francois Andriot <francois.andriot@free.fr>
 
-Source0:	https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{tde_version}/main/dependencies/%{tarball_name}-%{tde_version}%{?preversion:~%{preversion}}.tar.xz
+Source0:	https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{tde_version}/main/dependencies/%{tarball_name}-%{tde_version}.tar.xz
 Source1:	build-examples.sh
 Source2:	trinity-tqt-rpmlintrc
 
@@ -161,10 +158,10 @@ applications.
 
 ##########
 
-%package -n %{libtqt3}-mt
+%package -n %{libname}
 Summary:	TQt GUI Library (Threaded runtime version), Version 3
 Group:		System/GUI/Other
-Provides:	libtqt3-mt = %{version}-%{release}
+
 Provides:	trinity-tqt3 = %{version}-%{release}
 
 Requires(post): /sbin/ldconfig
@@ -172,18 +169,12 @@ Requires(postun): /sbin/ldconfig
 Requires: coreutils
 Requires: fontconfig >= 2.0
 
-%description -n %{libtqt3}-mt
+%description -n %{libname}
 This is the Trolltech TQt library, version 3. It's necessary for
 applications that link against the libtqt-mt.so.3, e.g. all Trinity
 applications.
 
-%post -n %{libtqt3}-mt
-/sbin/ldconfig || :
-
-%postun -n %{libtqt3}-mt
-/sbin/ldconfig || :
-
-%files -n %{libtqt3}-mt
+%files -n %{libname}
 %defattr(-,root,root,-)
 %doc FAQ LICENSE* README* changes*
 %dir %{_datadir}/tqt3/
@@ -211,12 +202,12 @@ applications.
 
 ###########
 
-%package -n %{libtqt3}-mt-devel
+%package -n %{devname}
 Summary:	TQt development files (Threaded)
 Group:		Development/Libraries/X11
 Provides:	trinity-tqt3-devel = %{version}-%{release}
-Provides:	libtqt3-mt-devel = %{version}-%{release}
-Requires:	%{libtqt3}-mt = %{version}-%{release}
+
+Requires:	%{libname} = %{version}-%{release}
 
 Requires: glibc-devel
 Requires: pkgconfig(fontconfig)
@@ -225,7 +216,7 @@ Requires: pkgconfig(libjpeg)
 Requires: pkgconfig(libpng)
 Requires: pkgconfig(zlib)
 
-%description -n %{libtqt3}-mt-devel
+%description -n %{devname}
 TQt is a C++ class library optimized for graphical user interface
 development. This package contains the libtqt-mt.so symlink, necessary
 for building threaded TQt applications as well as the libtqui.so symlink
@@ -239,13 +230,7 @@ anymore but which are still used by some programs. So if you encounter
 problems with missing header files, please install this package first
 before you send a bugreport.
 
-%post -n %{libtqt3}-mt-devel
-/sbin/ldconfig || :
-
-%postun -n %{libtqt3}-mt-devel
-/sbin/ldconfig || :
-
-%files -n %{libtqt3}-mt-devel
+%files -n %{devname}
 %defattr(-,root,root,-)
 %{_libdir}/libtqt-mt.la
 %{_libdir}/libtqt-mt.so
@@ -575,103 +560,103 @@ before you send a bugreport.
 
 ##########
 
-%package -n %{libtqt3}-mt-mysql
+%package -n %{libname}-mysql
 Summary:	MySQL database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
-Provides:	libtqt3-mt-mysql = %{version}-%{release}
-Requires:	%{libtqt3}-mt = %{version}-%{release}
 
-%description -n %{libtqt3}-mt-mysql
+Requires:	%{libname} = %{version}-%{release}
+
+%description -n %{libname}-mysql
 This package contains the threaded MySQL plugin for TQt3. Install it if
 you intend to use or write TQt programs that are to access a MySQL DB.
 
-%files -n %{libtqt3}-mt-mysql
+%files -n %{libname}-mysql
 %defattr(-,root,root,-)
 %{_libdir}/tqt3/plugins/sqldrivers/libqsqlmysql.so
 
 ##########
 
-%package -n %{libtqt3}-mt-odbc
+%package -n %{libname}-odbc
 Summary:	ODBC database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
-Provides:	libtqt3-mt-odbc = %{version}-%{release}
-Requires:	%{libtqt3}-mt = %{version}-%{release}
 
-%description -n %{libtqt3}-mt-odbc
+Requires:	%{libname} = %{version}-%{release}
+
+%description -n %{libname}-odbc
 This package contains the threaded ODBC plugin for TQt3. Install it if
 you intend to use or write TQt programs that are to access an ODBC DB.
 
-%files -n %{libtqt3}-mt-odbc
+%files -n %{libname}-odbc
 %defattr(-,root,root,-)
 %{_libdir}/tqt3/plugins/sqldrivers/libqsqlodbc.so
 
 ##########
 
-%package -n %{libtqt3}-mt-psql
+%package -n %{libname}-psql
 Summary:	PostgreSQL database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
-Provides:	libtqt3-mt-psql = %{version}-%{release}
-Requires:	%{libtqt3}-mt = %{version}-%{release}
 
-%description -n %{libtqt3}-mt-psql
+Requires:	%{libname} = %{version}-%{release}
+
+%description -n %{libname}-psql
 This package contains the threaded PostgreSQL plugin for TQt3.
 Install it if you intend to use or write TQt programs that are
 to access a PostgreSQL DB.
 
-%files -n %{libtqt3}-mt-psql
+%files -n %{libname}-psql
 %defattr(-,root,root,-)
 %{_libdir}/tqt3/plugins/sqldrivers/libqsqlpsql.so
 
 ##########
 
 %if %{with ibase}
-%package -n %{libtqt3}-mt-ibase
+%package -n %{libname}-ibase
 Summary:	InterBase/FireBird database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
-Provides:	libtqt3-mt-ibase = %{version}-%{release}
-Requires:	%{libtqt3}-mt = %{version}-%{release}
 
-%description -n %{libtqt3}-mt-ibase
+Requires:	%{libname} = %{version}-%{release}
+
+%description -n %{libname}-ibase
 This package contains the threaded InterBase/FireBird plugin
 for TQt3. Install it if you intend to use or write TQt programs
 that are to access an InterBase/FireBird DB.
 
-%files -n %{libtqt3}-mt-ibase
+%files -n %{libname}-ibase
 %defattr(-,root,root,-)
 %{_libdir}/tqt3/plugins/sqldrivers/libqsqlibase.so
 %endif
 
 ##########
 
-%package -n %{libtqt3}-mt-sqlite
+%package -n %{libname}-sqlite
 Summary:	SQLite database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
-Provides:	libtqt3-mt-sqlite = %{version}-%{release}
-Requires:	%{libtqt3}-mt = %{version}-%{release}
 
-%description -n %{libtqt3}-mt-sqlite
+Requires:	%{libname} = %{version}-%{release}
+
+%description -n %{libname}-sqlite
 This package contains the threaded SQLite plugin for TQt3. Install
 it if you intend to use or write TQt programs that are to access an
 SQLite DB.
 
-%files -n %{libtqt3}-mt-sqlite
+%files -n %{libname}-sqlite
 %defattr(-,root,root,-)
 %{_libdir}/tqt3/plugins/sqldrivers/libqsqlite.so
 
 ##########
 
-%package -n %{libtqt3}-mt-sqlite3
+%package -n %{libname}-sqlite3
 Summary:	SQLite3 database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
-Provides:	libtqt3-mt-sqlite3 = %{version}-%{release}
-Requires:	%{libtqt3}-mt = %{version}-%{release}
 
-%description -n %{libtqt3}-mt-sqlite3
+Requires:	%{libname} = %{version}-%{release}
+
+%description -n %{libname}-sqlite3
 This package contains the threaded SQLite3 plugin for TQt3. Install
 it if you intend to use or write TQt programs that are to access an
 SQLite3 DB.
 
-%files -n %{libtqt3}-mt-sqlite3
+%files -n %{libname}-sqlite3
 %defattr(-,root,root,-)
 %{_libdir}/tqt3/plugins/sqldrivers/libqsqlite3.so
 
@@ -680,7 +665,7 @@ SQLite3 DB.
 %package -n tqt3-compat-headers
 Summary:	TQt 1.x and 2.x compatibility includes
 Group:		Development/Libraries/X11
-Requires:	%{libtqt3}-mt = %{version}-%{release}
+Requires:	%{libname} = %{version}-%{release}
 
 %description -n tqt3-compat-headers
 This package contains header files that are intended for build
@@ -747,7 +732,7 @@ libtqt3-headers.
 %package -n tqt3-dev-tools
 Summary:	TQt3 development tools
 Group:		Development/Libraries/X11
-Requires:	%{libtqt3}-mt-devel = %{version}-%{release}
+Requires:	%{devname} = %{version}-%{release}
 Requires:	tqt3-dev-tools-devel = %{version}-%{release}
 
 %description -n tqt3-dev-tools
@@ -787,7 +772,7 @@ that are written using TQt3.
 %package -n tqt3-designer
 Summary:	TQt3 Designer
 Group:		System/GUI/Other
-Requires:	%{libtqt3}-mt = %{version}-%{release}
+Requires:	%{libname} = %{version}-%{release}
 Requires:	tqt3-doc = %{version}-%{release}
 
 %description -n tqt3-designer
@@ -831,7 +816,7 @@ or automake.
 %package -n tqt3-apps-devel
 Summary:	TQt3 Developer applications development files
 Group:		Development/Libraries/X11
-Requires:	%{libtqt3}-mt-devel = %{version}-%{release}
+Requires:	%{devname} = %{version}-%{release}
 Requires:	tqt3-apps-libs = %{version}-%{release}
 
 %description -n tqt3-apps-devel
@@ -842,12 +827,6 @@ It allows integrating additional enhancements into the TQt Designer
 respectively faciliate the TQt Assistant from within your TQt application
 to interactively call the Assistant for displaying online help that the
 developer includes with his application.
-
-%post -n tqt3-apps-devel
-/sbin/ldconfig || :
-
-%postun -n tqt3-apps-devel
-/sbin/ldconfig || :
 
 %files -n tqt3-apps-devel
 %defattr(-,root,root,-)
@@ -864,7 +843,7 @@ developer includes with his application.
 %package -n tqt3-apps-libs
 Summary:	TQt3 Developer applications libraries
 Group:		Development/Libraries/X11
-Requires:	%{libtqt3}-mt = %{version}-%{release}
+Requires:	%{libname} = %{version}-%{release}
 
 %description -n tqt3-apps-libs
 This package is intended for developers who want to develop applications
@@ -874,12 +853,6 @@ It allows integrating additional enhancements into the TQt Designer
 respectively faciliate the TQt Assistant from within your TQt application
 to interactively call the Assistant for displaying online help that the
 developer includes with his application.
-
-%post -n tqt3-apps-libs
-/sbin/ldconfig || :
-
-%postun -n tqt3-apps-libs
-/sbin/ldconfig || :
 
 %files -n tqt3-apps-libs
 %defattr(-,root,root,-)
@@ -898,7 +871,7 @@ developer includes with his application.
 %package -n tqt3-linguist
 Summary:	The TQt3 Linguist
 Group:		System/GUI/Other
-Requires:	%{libtqt3}-mt = %{version}-%{release}
+Requires:	%{libname} = %{version}-%{release}
 Requires:	tqt3-doc = %{version}-%{release}
 
 %description -n tqt3-linguist
@@ -924,7 +897,7 @@ development files by the translator.
 %package -n tqt3-assistant
 Summary:	The TQt3 assistant application
 Group:		System/GUI/Other
-Requires:	%{libtqt3}-mt = %{version}-%{release}
+Requires:	%{libname} = %{version}-%{release}
 Requires:	tqt3-doc = %{version}-%{release}
 
 %description -n tqt3-assistant
@@ -952,7 +925,7 @@ the package tqt3-apps-devel.
 %package -n tqt3-qtconfig
 Summary:	The TQt3 Configuration Application
 Group:		Development/Libraries/X11
-Requires:	%{libtqt3}-mt = %{version}-%{release}
+Requires:	%{libname} = %{version}-%{release}
 Requires:	tqt3-doc = %{version}-%{release}
 
 %description -n tqt3-qtconfig
@@ -975,7 +948,7 @@ install this package.
 %package -n tqt3-dev-tools-embedded
 Summary:	Tools to develop embedded TQt applications
 Group:		System/GUI/Other
-Requires:	%{libtqt3}-mt-devel = %{version}-%{release}
+Requires:	%{devname} = %{version}-%{release}
 
 %description -n tqt3-dev-tools-embedded
 This package contains applications only suitable for developing
@@ -999,7 +972,7 @@ by TQt Embedded applications.
 %package -n tqt3-dev-tools-compat
 Summary:	Conversion utilities for TQt3 development
 Group:		System/GUI/Other
-Requires:	%{libtqt3}-mt-devel = %{version}-%{release}
+Requires:	%{devname} = %{version}-%{release}
 
 %description -n tqt3-dev-tools-compat
 This package contains some older TQt tools (namely tqtrename140,
@@ -1023,7 +996,7 @@ translation system to the TQt 3 system.
 %package -n tqt3-i18n
 Summary:	Translation (i18n) files for TQt3 library
 Group:		System/GUI/Other
-Requires:	%{libtqt3}-mt = %{version}-%{release}
+Requires:	%{libname} = %{version}-%{release}
 
 %description -n tqt3-i18n
 This package contains the internationalization files for the TQt library.
@@ -1101,7 +1074,7 @@ things that are possible with TQt3.
 %{_docdir}/tqt3-examples/tqt3-examples.tar.gz
 
 %prep
-%autosetup -n %{tarball_name}-%{tde_version}%{?preversion:~%{preversion}}
+%autosetup -n %{tarball_name}-%{tde_version}
 
 # fix variables in 'qmake.conf'
 %__sed -i mkspecs/*/qmake.conf \
