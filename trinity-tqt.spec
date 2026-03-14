@@ -1,6 +1,6 @@
 %bcond clang 1
 %bcond glibmainloop 1
-%bcond nas 1
+%bcond nas 0
 %bcond ibase 1
 %bcond nis 1
 
@@ -9,10 +9,10 @@
 %define tde_version 14.1.5
 %endif
 
+%define tde_pkg tqt
+
 %define libname %mklibname tqt3-mt
 %define devname %mklibname tqt3-mt -d
-
-%define tde_pkg tqt
 
 %undefine __brp_remove_la_files
 %define dont_remove_libtool_files 1
@@ -31,7 +31,6 @@ Group:		System/GUI/Other
 URL:		http://www.trinitydesktop.org/
 
 License:	GPLv2+
-
 
 Source0:	https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{tde_version}/main/dependencies/%{tarball_name}-%{tde_version}.tar.xz
 Source1:	build-examples.sh
@@ -162,10 +161,6 @@ applications.
 Summary:	TQt GUI Library (Threaded runtime version), Version 3
 Group:		System/GUI/Other
 
-Provides:	trinity-tqt3 = %{version}-%{release}
-
-Requires(post): /sbin/ldconfig
-Requires(postun): /sbin/ldconfig
 Requires: coreutils
 Requires: fontconfig >= 2.0
 
@@ -205,9 +200,8 @@ applications.
 %package -n %{devname}
 Summary:	TQt development files (Threaded)
 Group:		Development/Libraries/X11
-Provides:	trinity-tqt3-devel = %{version}-%{release}
 
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
 Requires: glibc-devel
 Requires: pkgconfig(fontconfig)
@@ -564,7 +558,7 @@ before you send a bugreport.
 Summary:	MySQL database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
 
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
 %description -n %{libname}-mysql
 This package contains the threaded MySQL plugin for TQt3. Install it if
@@ -580,7 +574,7 @@ you intend to use or write TQt programs that are to access a MySQL DB.
 Summary:	ODBC database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
 
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
 %description -n %{libname}-odbc
 This package contains the threaded ODBC plugin for TQt3. Install it if
@@ -596,7 +590,7 @@ you intend to use or write TQt programs that are to access an ODBC DB.
 Summary:	PostgreSQL database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
 
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
 %description -n %{libname}-psql
 This package contains the threaded PostgreSQL plugin for TQt3.
@@ -614,7 +608,7 @@ to access a PostgreSQL DB.
 Summary:	InterBase/FireBird database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
 
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
 %description -n %{libname}-ibase
 This package contains the threaded InterBase/FireBird plugin
@@ -632,7 +626,7 @@ that are to access an InterBase/FireBird DB.
 Summary:	SQLite database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
 
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
 %description -n %{libname}-sqlite
 This package contains the threaded SQLite plugin for TQt3. Install
@@ -649,7 +643,7 @@ SQLite DB.
 Summary:	SQLite3 database driver for TQt3 (Threaded)
 Group:		System/GUI/Other
 
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
 %description -n %{libname}-sqlite3
 This package contains the threaded SQLite3 plugin for TQt3. Install
@@ -665,7 +659,7 @@ SQLite3 DB.
 %package -n tqt3-compat-headers
 Summary:	TQt 1.x and 2.x compatibility includes
 Group:		Development/Libraries/X11
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
 %description -n tqt3-compat-headers
 This package contains header files that are intended for build
@@ -732,8 +726,8 @@ libtqt3-headers.
 %package -n tqt3-dev-tools
 Summary:	TQt3 development tools
 Group:		Development/Libraries/X11
-Requires:	%{devname} = %{version}-%{release}
-Requires:	tqt3-dev-tools-devel = %{version}-%{release}
+Requires:	%{devname} = %{EVRD}
+Requires:	tqt3-dev-tools-devel = %{EVRD}
 
 %description -n tqt3-dev-tools
 This package contains all tools that are necessary to build programs
@@ -772,8 +766,8 @@ that are written using TQt3.
 %package -n tqt3-designer
 Summary:	TQt3 Designer
 Group:		System/GUI/Other
-Requires:	%{libname} = %{version}-%{release}
-Requires:	tqt3-doc = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
+Requires:	tqt3-doc = %{EVRD}
 
 %description -n tqt3-designer
 The TQt Designer is a GUI design program that interactively lets you
@@ -816,8 +810,8 @@ or automake.
 %package -n tqt3-apps-devel
 Summary:	TQt3 Developer applications development files
 Group:		Development/Libraries/X11
-Requires:	%{devname} = %{version}-%{release}
-Requires:	tqt3-apps-libs = %{version}-%{release}
+Requires:	%{devname} = %{EVRD}
+Requires:	tqt3-apps-libs = %{EVRD}
 
 %description -n tqt3-apps-devel
 This package is intended for developers who want to develop applications
@@ -843,7 +837,7 @@ developer includes with his application.
 %package -n tqt3-apps-libs
 Summary:	TQt3 Developer applications libraries
 Group:		Development/Libraries/X11
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
 %description -n tqt3-apps-libs
 This package is intended for developers who want to develop applications
@@ -871,8 +865,8 @@ developer includes with his application.
 %package -n tqt3-linguist
 Summary:	The TQt3 Linguist
 Group:		System/GUI/Other
-Requires:	%{libname} = %{version}-%{release}
-Requires:	tqt3-doc = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
+Requires:	tqt3-doc = %{EVRD}
 
 %description -n tqt3-linguist
 This package contains the TQt3 Linguist which provides translators a
@@ -897,8 +891,8 @@ development files by the translator.
 %package -n tqt3-assistant
 Summary:	The TQt3 assistant application
 Group:		System/GUI/Other
-Requires:	%{libname} = %{version}-%{release}
-Requires:	tqt3-doc = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
+Requires:	tqt3-doc = %{EVRD}
 
 %description -n tqt3-assistant
 This package contains the TQt3 Assistant, an easy to use frontend for
@@ -925,8 +919,8 @@ the package tqt3-apps-devel.
 %package -n tqt3-qtconfig
 Summary:	The TQt3 Configuration Application
 Group:		Development/Libraries/X11
-Requires:	%{libname} = %{version}-%{release}
-Requires:	tqt3-doc = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
+Requires:	tqt3-doc = %{EVRD}
 
 %description -n tqt3-qtconfig
 The TQt Configuration program allows endusers to configure the look
@@ -948,7 +942,7 @@ install this package.
 %package -n tqt3-dev-tools-embedded
 Summary:	Tools to develop embedded TQt applications
 Group:		System/GUI/Other
-Requires:	%{devname} = %{version}-%{release}
+Requires:	%{devname} = %{EVRD}
 
 %description -n tqt3-dev-tools-embedded
 This package contains applications only suitable for developing
@@ -972,7 +966,7 @@ by TQt Embedded applications.
 %package -n tqt3-dev-tools-compat
 Summary:	Conversion utilities for TQt3 development
 Group:		System/GUI/Other
-Requires:	%{devname} = %{version}-%{release}
+Requires:	%{devname} = %{EVRD}
 
 %description -n tqt3-dev-tools-compat
 This package contains some older TQt tools (namely tqtrename140,
@@ -996,7 +990,7 @@ translation system to the TQt 3 system.
 %package -n tqt3-i18n
 Summary:	Translation (i18n) files for TQt3 library
 Group:		System/GUI/Other
-Requires:	%{libname} = %{version}-%{release}
+Requires:	%{libname} = %{EVRD}
 
 %description -n tqt3-i18n
 This package contains the internationalization files for the TQt library.
