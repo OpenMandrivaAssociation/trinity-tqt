@@ -5,10 +5,6 @@
 %bcond nis 1
 
 # TDE variables
-%if "%{?tde_version}" == ""
-%define tde_version 14.1.5
-%endif
-
 %define tde_pkg tqt
 
 %define libname %mklibname tqt3-mt
@@ -24,15 +20,15 @@
 %define tarball_name %{tde_pkg}-trinity
 
 Name:		trinity-tqt3
-Version:	3.5.0
-Release:	%{?tde_version:%{tde_version}_}4
+Version:	14.1.6
+Release:	1
 Summary:	TQt GUI Library, Version 3
 Group:		System/GUI/Other
 URL:		http://www.trinitydesktop.org/
 
 License:	GPLv2+
 
-Source0:	https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{tde_version}/main/dependencies/%{tarball_name}-%{tde_version}.tar.xz
+Source0:	https://mirror.ppa.trinitydesktop.org/trinity/releases/R%{version}/main/dependencies/%{tarball_name}-%{version}.tar.xz
 Source1:	build-examples.sh
 Source2:	trinity-tqt-rpmlintrc
 
@@ -543,7 +539,7 @@ before you send a bugreport.
 %{_includedir}/tqt3/qsql_sqlite3.h
 %{_includedir}/tqt3/qsqlcachedresult.h
 %{_includedir}/tqt3/qt_pch.h
-%{_includedir}/tqt3/qwindow.h
+# %{_includedir}/tqt3/qwindow.h
 %{_includedir}/tqt3/sourcetemplateiface.h
 %{_includedir}/tqt3/templatewizardiface.h
 %{_includedir}/tqt3/viewmanager.h
@@ -1068,7 +1064,7 @@ things that are possible with TQt3.
 %{_docdir}/tqt3-examples/tqt3-examples.tar.gz
 
 %prep
-%autosetup -n %{tarball_name}-%{tde_version}
+%autosetup -n %{tarball_name}-%{version}
 
 # fix variables in 'qmake.conf'
 %__sed -i mkspecs/*/qmake.conf \
